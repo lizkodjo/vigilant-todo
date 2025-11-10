@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY")
-    ALGORITHM: str = os.getenv("ALGORITHM")
+    ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     # CORS
     CORS_ORIGINS: list = ["http://localhost:3000"]
