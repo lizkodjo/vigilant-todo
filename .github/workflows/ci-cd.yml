@@ -60,6 +60,12 @@ jobs:
           pip install -r requirements.txt
           pip install pytest-cov
 
+      - name: Set Environment Variables
+        run: |
+          echo "SECRET_KEY=test-secret-key-for-ci" >> $GITHUB_ENV
+          echo "ACCESS_TOKEN_EXPIRE_MINUTES=30" >> $GITHUB_ENV
+          echo "DATABASE_URL=sqlite:///./test.db" >> $GITHUB_ENV
+
       - name: Run Tests with Coverage
         run: |
           pytest --cov=app --cov-report=xml --cov-report=html app/tests/
