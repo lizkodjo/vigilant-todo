@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import api_router
+from app.core.database import Base, engine
+from app.core.config import settings
 
+
+# Create database tables
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Vigilant Todo API",
@@ -14,7 +19,7 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React frontend
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,7 +39,7 @@ async def health_check():
     return {"status": "healthy", "service": "vigilant-todo-api"}
 
 
-if __name__ == "__main__":
-    import uvicorn
+# if __name__ == "__main__":
+#     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
