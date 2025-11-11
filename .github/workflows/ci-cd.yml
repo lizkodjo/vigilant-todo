@@ -139,4 +139,10 @@ jobs:
 
       - name: Test Frontend Docker Image
         run: |
-          docker run --rm vigilant-todo-frontend:${{ github.sha }} node -e "console.log('Frontend Node OK')"
+          # Test that the image starts and serves content
+          docker run -d --name frontend-test -p 8080:80 vigilant-todo-frontend:${{ github.sha }}
+          sleep 5
+          docker ps | grep frontend-test
+          curl -f http://localhost:8080 || exit 1
+          docker stop frontend-test
+          docker rm frontend-test
