@@ -112,7 +112,8 @@ jobs:
 
       - name: Build Backend Docker Image
         run: |
-          docker build -t vigilant-todo-backend:${{ github.sha }} ./backend
+          cd backend
+          docker build -t vigilant-todo-backend:${{ github.sha }} .
 
       - name: Test Backend Docker Image
         run: |
@@ -133,7 +134,8 @@ jobs:
 
       - name: Build Frontend Docker Image
         run: |
-          docker build -t vigilant-todo-frontend:${{ github.sha }} ./frontend
+          cd frontend
+          docker build -t vigilant-todo-frontend:${{ github.sha }} .
 
       - name: Test Frontend Docker Image
         run: |
