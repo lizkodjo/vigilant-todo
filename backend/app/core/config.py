@@ -1,3 +1,4 @@
+from typing import List
 from pydantic_settings import BaseSettings
 import os
 from dotenv import load_dotenv
@@ -17,8 +18,13 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    # CORS
-    CORS_ORIGINS: list = ["http://localhost:3000"]
+
+    # CORS - Updated for frontend
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:5173",  # Vite dev server
+        "http://127.0.0.1:5173",
+    ]
 
     class ConfigDict:
         env_file = ".env"
