@@ -1,23 +1,22 @@
-import {
+import React, {
   createContext,
+  useState,
   useContext,
   useEffect,
-  useState,
-  type FC,
   type ReactNode,
 } from "react";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  full_name?: string;
-}
+import {
+  authService,
+  type User,
+  type LoginCredentials,
+  type RegisterData,
+} from "../services/authService";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (token: string, userData: User) => void;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -28,11 +27,11 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for exising token on app start
+  // Check for existing token on app start
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -40,23 +39,44 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
+        // Optionally verify token is still valid by fetching user data
+        // authService.getCurrentUser().then(setUser).catch(logout);
       } catch (error) {
         console.error("Error parsing user data:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        logout();
       }
     }
+
     setIsLoading(false);
   }, []);
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+  const login = async (credentials: LoginCredentials): Promise<void> => {
+    try {
+      const response = await authService.login(credentials);
+      const userData = await authService.getCurrentUser();
+
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
   };
+
+  const register = async (userData: RegisterData): Promise<void> => {
+    try {
+      await authService.register(userData);
+      // After registration, automatically log the user in
+      await login({ username: userData.username, password: userData.password });
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
+  };
+
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    authService.logout();
     setUser(null);
   };
 
@@ -64,18 +84,14 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated: !!user,
     login,
+    register,
     logout,
     isLoading,
   };
 
-  return (
-    <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook to use auth context
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
