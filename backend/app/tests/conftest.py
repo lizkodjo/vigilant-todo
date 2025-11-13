@@ -14,7 +14,6 @@ sys.path.append(
 
 from app.core.database import Base, get_db
 from app.main import app
-from app.core.security import create_access_token
 
 # Test database
 TEST_DATABASE_URL = "sqlite:///./test.db"
@@ -47,7 +46,7 @@ def db_session(test_db):
 
 @pytest.fixture
 def client(db_session):
-    """Create test client with overriden database dependency"""
+    """Create test client with overridden database dependency"""
 
     def override_get_db():
         try:
@@ -58,17 +57,3 @@ def client(db_session):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     app.dependency_overrides.clear()
-
-
-@pytest.fixture
-def auth_headers():
-    """Generate authentication headers for tests"""
-    token = create_access_token(data={"sub": "testuser"})
-    return {"Authorization": f"Bearer {token}"}
-
-
-@pytest.fixture
-def second_user_headers():
-    """Generate authentication headers for a second test user"""
-    token = create_access_token(data={"sub": "testuser2"})
-    return {"Authorization": f"Bearer {token}"}
