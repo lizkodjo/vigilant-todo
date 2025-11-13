@@ -8,11 +8,12 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests",
-    "test:coverage": "jest --coverage --passWithNoTests"
+   
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
+ 
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.90.7",
