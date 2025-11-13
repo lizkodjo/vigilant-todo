@@ -1,7 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+// Safe way to get API URL that works in both dev and test
+let API_BASE_URL = "http://localhost:8000/api/v1";
+
+// Check if we're in a Vite environment with env variables
+if (import.meta.env?.VITE_API_URL) {
+  API_BASE_URL = import.meta.env.VITE_API_URL;
+}
 
 // Create axios instance
 const api = axios.create({
@@ -25,7 +30,7 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle error
+// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {

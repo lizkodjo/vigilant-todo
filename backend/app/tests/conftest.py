@@ -6,7 +6,6 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.core.security import create_access_token
 
 # Add the project root to Python path
 sys.path.append(
@@ -15,6 +14,7 @@ sys.path.append(
 
 from app.core.database import Base, get_db
 from app.main import app
+from app.core.security import create_access_token
 
 # Test database
 TEST_DATABASE_URL = "sqlite:///./test.db"
