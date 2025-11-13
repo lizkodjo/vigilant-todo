@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import Login from "../../pages/Login/Login";
@@ -17,7 +17,15 @@ jest.mock("../../services/authService", () => ({
 // Import the mocked module to get references to the mock functions
 import { authService } from "../../services/authService";
 
-const renderWithProviders = (component: React.ReactNode) => {
+// Type the mocked functions to include Jest mock properties
+const mockedAuthService = authService as {
+  login: jest.MockedFunction<typeof authService.login>;
+  getCurrentUser: jest.MockedFunction<typeof authService.getCurrentUser>;
+  register: jest.MockedFunction<typeof authService.register>;
+  logout: jest.MockedFunction<typeof authService.logout>;
+};
+
+const renderWithProviders = (component: ReactNode) => {
   return render(
     <BrowserRouter>
       <AuthProvider>{component}</AuthProvider>
@@ -41,15 +49,18 @@ describe("Login Component", () => {
   });
 
   it("submits form with correct data", async () => {
-    // Use the mocked functions from the imported module
-    authService.login.mockResolvedValue({
+    // Use the typed mocked functions
+    mockedAuthService.login.mockResolvedValue({
       access_token: "test-token",
       token_type: "bearer",
     });
-    authService.getCurrentUser.mockResolvedValue({
+    mockedAuthService.getCurrentUser.mockResolvedValue({
       id: 1,
       username: "testuser",
       email: "test@example.com",
+      full_name: "Test User",
+      is_active: true,
+      created_at: "",
     });
 
     renderWithProviders(<Login />);
@@ -64,7 +75,7 @@ describe("Login Component", () => {
     fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
-      expect(authService.login).toHaveBeenCalledWith({
+      expect(mockedAuthService.login).toHaveBeenCalledWith({
         username: "testuser",
         password: "password123",
       });
@@ -72,7 +83,7 @@ describe("Login Component", () => {
   });
 
   it("displays error message on login failure", async () => {
-    authService.login.mockRejectedValue({
+    mockedAuthService.login.mockRejectedValue({
       response: {
         data: {
           detail: "Invalid credentials",
