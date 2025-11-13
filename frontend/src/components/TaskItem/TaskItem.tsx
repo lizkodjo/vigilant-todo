@@ -1,5 +1,5 @@
-import { type FC } from "react";
-import { type Task } from "../../services/taskService";
+import React from "react";
+import { Task } from "../../services/taskService";
 
 interface TaskItemProps {
   task: Task;
@@ -7,7 +7,7 @@ interface TaskItemProps {
   onDelete: (id: number) => void;
 }
 
-const TaskItem: FC<TaskItemProps> = ({
+const TaskItem: React.FC<TaskItemProps> = ({
   task,
   onToggleCompletion,
   onDelete,
@@ -37,6 +37,11 @@ const TaskItem: FC<TaskItemProps> = ({
                 ? "bg-green-500 border-green-500 text-white"
                 : "border-gray-300 hover:border-green-500"
             }`}
+            aria-label={
+              task.completed
+                ? "Mark task as incomplete"
+                : "Mark task as complete"
+            }
           >
             {task.completed && "✓"}
           </button>
@@ -61,7 +66,7 @@ const TaskItem: FC<TaskItemProps> = ({
         <button
           onClick={handleDelete}
           className="text-red-500 hover:text-red-700 p-2 transition-colors"
-          title="Delete task"
+          aria-label="Delete task"
         >
           🗑️
         </button>

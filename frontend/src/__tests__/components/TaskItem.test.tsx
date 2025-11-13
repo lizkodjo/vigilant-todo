@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import type { Task } from "../../services/taskService";
+import { render, screen, fireEvent } from "@testing-library/react";
 import TaskItem from "../../components/TaskItem/TaskItem";
+import { Task } from "../../services/taskService";
 
 const mockTask: Task = {
   id: 1,
@@ -9,7 +9,7 @@ const mockTask: Task = {
   completed: false,
   owner_id: 1,
   created_at: "2023-01-01T00:00:00Z",
-  updated_at: "",
+  updated_at: "2023-01-01T00:00:00Z",
 };
 
 describe("TaskItem Component", () => {
@@ -18,6 +18,8 @@ describe("TaskItem Component", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock window.confirm
+    window.confirm = jest.fn().mockReturnValue(true);
   });
 
   it("renders task information correctly", () => {
@@ -28,6 +30,7 @@ describe("TaskItem Component", () => {
         onDelete={mockOnDelete}
       />
     );
+
     expect(screen.getByText("Test Task")).toBeInTheDocument();
     expect(screen.getByText("Test Description")).toBeInTheDocument();
     expect(screen.getByText(/Created:/)).toBeInTheDocument();
@@ -42,17 +45,14 @@ describe("TaskItem Component", () => {
       />
     );
 
-    const toggleButton = screen.getByRole("button", {
-      name: /toggle completion/i,
-    });
+    // Use aria-label to find the toggle button
+    const toggleButton = screen.getByLabelText(/mark task as complete/i);
     fireEvent.click(toggleButton);
 
     expect(mockOnToggle).toHaveBeenCalledWith(1);
   });
 
-  it("calls onDelect when delete button is clicked and confirmed", () => {
-    window.confirm = jest.fn().mockReturnValue(true);
-
+  it("calls onDelete when delete button is clicked and confirmed", () => {
     render(
       <TaskItem
         task={mockTask}
@@ -60,7 +60,9 @@ describe("TaskItem Component", () => {
         onDelete={mockOnDelete}
       />
     );
-    const deleteButton = screen.getByRole("button", { name: /delete task/i });
+
+    // Use aria-label to find the delete button
+    const deleteButton = screen.getByLabelText(/delete task/i);
     fireEvent.click(deleteButton);
 
     expect(window.confirm).toHaveBeenCalledWith(
@@ -69,7 +71,7 @@ describe("TaskItem Component", () => {
     expect(mockOnDelete).toHaveBeenCalledWith(1);
   });
 
-  it("does not call onDelete when delete is cancelled", () => {
+  it("does not call onDelete when deletion is cancelled", () => {
     window.confirm = jest.fn().mockReturnValue(false);
 
     render(
@@ -80,7 +82,7 @@ describe("TaskItem Component", () => {
       />
     );
 
-    const deleteButton = screen.getByRole("button", { name: /delete task/i });
+    const deleteButton = screen.getByLabelText(/delete task/i);
     fireEvent.click(deleteButton);
 
     expect(mockOnDelete).not.toHaveBeenCalled();
@@ -88,6 +90,7 @@ describe("TaskItem Component", () => {
 
   it("shows completed state correctly", () => {
     const completedTask = { ...mockTask, completed: true };
+
     render(
       <TaskItem
         task={completedTask}
@@ -96,9 +99,26 @@ describe("TaskItem Component", () => {
       />
     );
 
-    const toggleButton = screen.getByRole("button", {
-      name: /toggle completion/i,
-    });
-    expect(toggleButton).toHaveTextContent("✔️");
+    // Check for completed state indicators
+    const toggleButton = screen.getByLabelText(/mark task as incomplete/i);
+    expect(toggleButton).toHaveTextContent("✓");
+
+    // Check for strikethrough text
+    const title = screen.getByText("Test Task");
+    expect(title).toHaveClass("line-through");
+  });
+
+  it("has correct accessibility attributes", () => {
+    render(
+      <TaskItem
+        task={mockTask}
+        onToggleCompletion={mockOnToggle}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    // Check that buttons have proper aria-labels
+    expect(screen.getByLabelText(/mark task as complete/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/delete task/i)).toBeInTheDocument();
   });
 });

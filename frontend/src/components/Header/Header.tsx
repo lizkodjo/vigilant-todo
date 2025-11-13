@@ -22,7 +22,7 @@ const Header: FC = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo and navigation */}
             <div className="flex items-center">
-              <Link to="/dashboard" className="flex-shrink-0 flex items-center">
+              <Link to="/dashboard" className="shrink-0 flex items-center">
                 <span className="text-xl font-bold text-gray-800">
                   🛡️ Vigilant Todo
                 </span>
