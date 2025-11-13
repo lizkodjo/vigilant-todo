@@ -51,9 +51,9 @@ def test_user_login_success(client: TestClient):
     }
     client.post("/api/v1/users/register", json=user_data)
 
-    # Then login - our endpoint expects form data for login
+    # Then login - use params for query parameters
     login_data = {"username": "loginuser", "password": "loginpass123"}
-    response = client.post("/api/v1/users/login", data=login_data)
+    response = client.post("/api/v1/users/login", params=login_data)
     assert (
         response.status_code == 200
     ), f"Expected 200, got {response.status_code}. Response: {response.text}"
@@ -65,7 +65,7 @@ def test_user_login_success(client: TestClient):
 def test_user_login_invalid_credentials(client: TestClient):
     """Test login with invalid credentials"""
     login_data = {"username": "nonexistent", "password": "wrongpass"}
-    response = client.post("/api/v1/users/login", data=login_data)
+    response = client.post("/api/v1/users/login", params=login_data)
     assert (
         response.status_code == 401
     ), f"Expected 401, got {response.status_code}. Response: {response.text}"
@@ -89,7 +89,7 @@ def test_protected_endpoint_with_valid_token(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "protecteduser", "password": "testpass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"

@@ -12,7 +12,7 @@ def test_create_task_success(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "taskuser", "password": "taskpass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"
@@ -49,7 +49,7 @@ def test_get_tasks_empty(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "emptyuser", "password": "emptypass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"
@@ -75,7 +75,7 @@ def test_get_tasks_with_data(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "datauser", "password": "datapass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"
@@ -107,7 +107,7 @@ def test_update_task_success(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "updateuser", "password": "updatepass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"
@@ -145,7 +145,7 @@ def test_delete_task_success(client: TestClient):
     client.post("/api/v1/users/register", json=user_data)
 
     login_data = {"username": "deleteuser", "password": "deletepass123"}
-    login_response = client.post("/api/v1/users/login", data=login_data)
+    login_response = client.post("/api/v1/users/login", params=login_data)
     assert login_response.status_code == 200, f"Login failed: {login_response.text}"
     token_data = login_response.json()
     assert "access_token" in token_data, f"Token missing: {token_data}"
@@ -183,7 +183,7 @@ def test_task_ownership_isolation(client: TestClient):
     client.post("/api/v1/users/register", json=user1_data)
 
     login1_data = {"username": "user1", "password": "user1pass123"}
-    login1_response = client.post("/api/v1/users/login", data=login1_data)
+    login1_response = client.post("/api/v1/users/login", params=login1_data)
     assert (
         login1_response.status_code == 200
     ), f"User1 login failed: {login1_response.text}"
@@ -205,7 +205,7 @@ def test_task_ownership_isolation(client: TestClient):
     client.post("/api/v1/users/register", json=user2_data)
 
     login2_data = {"username": "user2", "password": "user2pass123"}
-    login2_response = client.post("/api/v1/users/login", data=login2_data)
+    login2_response = client.post("/api/v1/users/login", params=login2_data)
     assert (
         login2_response.status_code == 200
     ), f"User2 login failed: {login2_response.text}"
