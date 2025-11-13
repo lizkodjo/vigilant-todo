@@ -193,3 +193,42 @@ jobs:
         with:
           name: frontend-coverage
           path: frontend/coverage/
+
+  enhanced-security:
+    name: Enhanced Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Backend SAST with Bandit
+        run: |
+          cd backend
+          pip install bandit safety
+          bandit -r app/ -f json -o bandit-results.json -c .bandit.yml
+
+      - name: Backend SCA with Safety
+        run: |
+          cd backend
+          safety check --json --output safety-report.json
+
+      - name: Frontend SCA with npm audit
+        run: |
+          cd frontend
+          npm audit --audit-level=moderate --json > npm-audit-report.json || true
+
+      - name: Frontend SAST with ESLint security
+        run: |
+          cd frontend
+          npm install eslint-plugin-security
+          npx eslint src/ --config .eslintrc.security.js --format json -o eslint-security-report.json || true
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: enhanced-security-reports
+          path: |
+            backend/bandit-results.json
+            backend/safety-report.json
+            frontend/npm-audit-report.json
+            frontend/eslint-security-report.json
