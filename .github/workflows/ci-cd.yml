@@ -210,7 +210,7 @@ jobs:
       - name: Backend SCA with Safety
         run: |
           cd backend
-          safety check --json --output safety-report.json
+          safety check --json > safety-report.json
 
       - name: Frontend SCA with npm audit
         run: |
