@@ -101,6 +101,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set Environment Variables
+        run: |
+          echo "SECRET_KEY=test-secret-key-for-ci" >> $GITHUB_ENV
+          echo "DATABASE_URL=sqlite:///./test.db" >> $GITHUB_ENV
+
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
