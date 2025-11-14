@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Security Tools
         run: |
-          pip install bandit safety
+          pip install bandit pip-audit
 
       - name: Run Bandit SAST
         run: |
@@ -35,7 +35,6 @@ jobs:
 
       - name: Run pip-audit SCA
         run: |
-          pip install pip-audit
           pip-audit --format json --output pip-audit-report.json
         continue-on-error: true
 
@@ -45,7 +44,7 @@ jobs:
           name: backend-security-reports
           path: |
             backend/bandit-results.json
-            backend/safety-report.json
+            backend/pip-audit-report.json
 
   frontend-security:
     name: Frontend Security Scan
