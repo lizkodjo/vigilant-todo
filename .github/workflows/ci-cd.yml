@@ -224,7 +224,7 @@ jobs:
           npx eslint src/ --config .eslintrc.security.js --format json -o eslint-security-report.json || true
 
       - name: Upload Security Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: enhanced-security-reports
           path: |
