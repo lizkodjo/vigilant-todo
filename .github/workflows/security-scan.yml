@@ -33,9 +33,10 @@ jobs:
         run: |
           bandit -r app/ -f json -o bandit-results.json -c .bandit.yml
 
-      - name: Run Safety SCA
+      - name: Run pip-audit SCA
         run: |
-          safety scan --json > safety-report.json
+          pip install pip-audit
+          pip-audit --format json --output pip-audit-report.json
         continue-on-error: true
 
       - name: Upload Backend Security Reports

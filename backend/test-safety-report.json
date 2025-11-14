@@ -6,3 +6,21 @@ with Safety
 (R)egister for a free account in 30 seconds, 
 or (L)ogin with an existing account to 
 continue (R/L): 
+
+Redirecting your browser to register for a 
+free account. Once registered, return here to
+start using Safety.
+
+If the browser does not automatically open in
+5 seconds, copy and paste this url into your 
+browser: 
+https://platform.safetycli.com/cli/auth?respo
+nse_type=code&client_id=AWnwFBMr9DdZbxbDwYxjm
+4Gb24pFTnMp&redirect_uri=https%3A%2F%2Fplatfo
+rm.safetycli.com%2Fcli%2Fcallback&scope=openi
+d+email+profile+offline_access&state=REtG4kSa
+olrocRg3L9j1A4jnsGOv2R&sign_up=True&locale=en
+&ensure_auth=False&headless=False&code_challe
+nge=Y1E3C3w_cCrwj8EEgrnv4M_wHgDyxGclHUxzACu5u
+zU&code_challenge_method=S256&port=54597
+
